@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.2.2 (Python 3.13.3 on win32)" generated="2025-05-21T10:27:48.532785" rpa="false" schemaversion="5">
+<suite id="s1" name="teste KEYWORD" source="E:\TRABALHO\COMPASS UOL\Trilhas\Automação de Testes com Robot Framework - Básico\VariaveisEscoposArgumentos\teste_KEYWORD.robot">
+<test id="s1-t1" name="Criando imprimindo e-mail customizado e aleatorio" line="9">
+<kw name="Criar e-mail customizado e aleatório">
+<kw name="Generate Random String" owner="String">
+<msg time="2025-05-21T10:27:48.583847" level="INFO">${ALEATORIA} = 20ONOD8g</msg>
+<var>${ALEATORIA}</var>
+<doc>Generates a string with a desired ``length`` from the given ``chars``.</doc>
+<status status="PASS" start="2025-05-21T10:27:48.583655" elapsed="0.000234"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-05-21T10:27:48.584178" level="INFO">${EMAIL_FINAL} = 20ONOD8g@testerobot.com</msg>
+<var>${EMAIL_FINAL}</var>
+<arg>${ALEATORIA}@testerobot.com</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-05-21T10:27:48.584015" elapsed="0.000194"/>
+</kw>
+<return>
+<value>${EMAIL_FINAL}</value>
+<status status="PASS" start="2025-05-21T10:27:48.584271" elapsed="0.000046"/>
+</return>
+<msg time="2025-05-21T10:27:48.584440" level="INFO">${EMAIL_CRIADO} = 20ONOD8g@testerobot.com</msg>
+<var>${EMAIL_CRIADO}</var>
+<arg>${PESSOA.nome}</arg>
+<arg>${PESSOA.sobrenome}</arg>
+<status status="PASS" start="2025-05-21T10:27:48.582370" elapsed="0.002095"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>${EMAIL_CRIADO}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-05-21T10:27:48.584752" elapsed="0.000318"/>
+</kw>
+<status status="PASS" start="2025-05-21T10:27:48.581598" elapsed="0.003749"/>
+</test>
+<doc>Exemplo de uso de variáveis como argumentos em Keywords</doc>
+<status status="PASS" start="2025-05-21T10:27:48.536598" elapsed="0.049681"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="teste KEYWORD" id="s1" pass="1" fail="0" skip="0">teste KEYWORD</stat>
+</suite>
+</statistics>
+<errors>
+<msg time="2025-05-21T10:27:48.491320" level="WARN">Error in file 'E:\TRABALHO\COMPASS UOL\Trilhas\Automação de Testes com Robot Framework - Básico\VariaveisEscoposArgumentos\teste_KEYWORD.robot' on line 5: Singular section headers like '*** Variable ***' are deprecated. Use plural format like '*** Variables ***' instead.</msg>
+<msg time="2025-05-21T10:27:48.492213" level="WARN">Error in file 'E:\TRABALHO\COMPASS UOL\Trilhas\Automação de Testes com Robot Framework - Básico\VariaveisEscoposArgumentos\teste_KEYWORD.robot' on line 18: The '[Return]' setting is deprecated. Use the 'RETURN' statement instead.</msg>
+</errors>
+</robot>
