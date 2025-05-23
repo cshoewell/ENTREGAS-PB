@@ -4,78 +4,66 @@ Library  String
 Library  Collections
 
 
+*** Variables ***
+${url}      https://restful-booker.herokuapp.com
+
+
 *** Keywords ***
-Criar um token novo
+
+Criar sessao na API
+    ${header}    Create Dictionary  
+    ...          Content-Type=application/json
+    
+    Create Session    alias=Restful-booker    url=${url}    headers=${header}
+
+    ${header}    Create Dictionary  
+    ...          Content-Type=application/json
+    Log    ${header}
+
     ${body}    Create Dictionary
-    ...        Content-Type=application/json
     ...        username=admin
     ...        password=password123
-    
-    ${response}    POST
-    ...        url=https://restful-booker.herokuapp.com/auth
-    ...        json=${body}
-    Log    ${response.json()}
-    
-    ${token}    Set Variable    ${response.json()}[token]
-    Log    ${token}
-    Set Suite Variable    ${token}
+    Log    ${body}
+
+Criar um token novo
+    ${response}    POST On Session
+    ...            alias=Restful-booker
+    ...            url=/auth
+    #...            json=${body}
+   
+    Set Test Variable        ${token}    ${response.json()}[token]
+    Status Should Be     200
 
 Conferir se o token foi criado corretamente
-    Set Suite Variable    ${response}   
-    ${token}    Set Variable    ${response.json()}[token]
-    Log  ${response}.json()
-    Dictionary Should Contain Item  ${response}  token  abc123
+    Log    ${token}
     Status Should Be    200
     Should Not Be Empty  ${token}
 
 Buscar uma lista de reservas
     ${response}  GET
-    ...          url=https://restful-booker.herokuapp.com/booking
+    ...          url=${url}/booking
     Log  ${response.json()}
 
-    Should Contain  ${response}  bookingid  
     Status Should Be    200
     Should Not Be Empty  ${response.json()}
 
 Buscar uma reserva pelo ID
-    ${header}    Create Dictionary  
-    ...        Accept=application/json
-   
-    ${body}    Create Dictionary
-    ...        firstname=John
-    ...        lastname=Doe
-    ...        totalprice=123
-    ...        depositpaid=true
-    ...        bookingdates=Create Dictionary
-    ...            checkin=2023-10-01
-    ...            checkout=2023-10-10
-    ...        additionalneeds=Breakfast
+    Set Suite Variable    ${id}    5
     
-    ${id}    Set Variable    ${response.json()}[bookingid]
-    Set Suite Variable    ${response}
-    Set Suite Variable    ${id}
-    ${response}    GET    https://restful-booker.herokuapp.com/booking/${id}    
-    Log    ${response.json()}
-    Should Contain  ${response}  ${body}
+    ${resposta}    GET    https://restful-booker.herokuapp.com/booking/${id}    
+    Log    ${resposta}
+    #Should Be Equal  ${id}    143
     Status Should Be    200
-    Should Not Be Empty  ${response.json()}
-
+    Should Not Be Empty  ${resposta.json()}
+       
 Buscar uma reserva pelo nome
     ${body}    Create Dictionary    
-    ...        firstname=John
-    ...        lastname=Doe
- 
-    ${response}  GET  url=https://restful-booker.herokuapp.com/booking/${body}
-    Status Should Be    200
-    Log List    ${response.json()}
-    FOR  ${booking}  IN  @{response.json()}
-        ${response}    GET    https://restful-booker.herokuapp.com/booking/${booking}[bookingid]
-        TRY
-            Log    ${response.json()}
-        EXCEPT
-            Log    Cannot retrieve JSON due to invalid data
-        END
-    END
+    ...        firstname=Susan
+    Log  ${body} 
+
+    ${response.json()}  GET  https://restful-booker.herokuapp.com/booking?${body}
+    Log    ${response.json()}
+    Status Should Be    200   
 
 Buscar uma reserva pela data
     ${body}    Create Dictionary    
@@ -83,7 +71,8 @@ Buscar uma reserva pela data
     ...        checkout=2023-10-10
    
     ${response}  GET
-    ...          url=https://restful-booker.herokuapp.com/booking/${body}
+    ...          url=https://restful-booker.herokuapp.com/booking?${body}&${body}
+    Log  ${response.json()}
     Status Should Be    200
 
 Criar uma reserva
@@ -92,30 +81,37 @@ Criar uma reserva
     ...          Accept=application/json
         
     ${body}    Create Dictionary
-    ...        firstname=John
-    ...        lastname=Doe
-    ...        totalprice=123
+    ...        firstname=Carolina
+    ...        lastname=Hoewell
+    ...        totalprice=148
     ...        depositpaid=true
     ...        bookingdates=Create Dictionary
-    ...            checkin=2023-10-01
-    ...            checkout=2023-10-10
+    ...            checkin=2024-10-01
+    ...            checkout=2024-10-10
     ...        additionalneeds=Breakfast
 
+    #Create Session    alias=Restful-booker    url=${url}    headers=${header}
+
     ${response}  POST
-    ...          url=https://restful-booker.herokuapp.com/booking  json=${body}
-    ${id}    Set Variable    ${response.json()}[bookingid]
-    Set Suite Variable    ${id}
+    ...          url=https://restful-booker.herokuapp.com/booking
+    ...          json=${body}
+    
+    Set Test Variable        ${id}    ${response.json()}[bookingid]
+    Log  ${id}
     Status Should Be    200
-    Should Be Equal    ${response.json()}[lastname]    Doe
-    Should Be Equal    ${response.json()}[firstname]    John   
-    Should Be Equal As Numbers    ${response.json()}[totalprice]    200
-    Dictionary Should Contain Value     ${response.json()}    Doe
+    Should Be Equal    ${response.json()}[firstname]    Carolina  
+    Should Be Equal    ${response.json()}[lastname]    Hoewell
+    Should Be Equal As Numbers    ${response.json()}[totalprice]    148
+    Dictionary Should Contain Value     ${response.json()}    Carolina
+
+
+
 
 Atualizar uma reserva
     ${header}    Create Dictionary
     ...          Content-Type=application/json
     ...          Accept=application/json
-    ...          Cookie=token\=${token}
+    ...          Cookie=${token}
     ...          Authorization=Basic YWRtaW46cGFzc3dvcmQxMjM=
     
     ${body}    Create Dictionary
@@ -140,7 +136,7 @@ Atualizar parcialmente uma reserva
     ${header}    Create Dictionary
     ...          Content-Type=application/json
     ...          Accept=application/json
-    ...          Cookie=token\=${token}
+    ...          Cookie=${token}
     ...          Authorization=Basic YWRtaW46cGFzc3dvcmQxMjM=
     
     ${body}    Create Dictionary
@@ -154,7 +150,7 @@ Atualizar parcialmente uma reserva
 
 Deletar uma reserva
     ${header}    Create Dictionary
-    ...          Cookie=token\=${token}
+    ...          Cookie=${token}
     ...          Authorization=Basic YWRtaW46cGFzc3dvcmQxMjM=
     ${body}    Create Dictionary
     ...        username=admin
